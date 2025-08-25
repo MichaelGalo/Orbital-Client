@@ -1,3 +1,4 @@
+import { fetchAstronauts } from "@/services/fetch-datasets";
 import { useEffect, useState } from "react";
 
 export const Astronauts = () => {

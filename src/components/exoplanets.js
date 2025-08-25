@@ -6,11 +6,11 @@ export const Exoplanets = () => {
     const [exoplanets_data, setExoplanetsData] = useState([]);
 
     useEffect(() => {
-        const fetchExoplanets = async () => {
+        const getExoplanets = async () => {
             const data = await fetchExoplanetsData();
             setExoplanetsData(data);
         };
-        fetchExoplanets();
+        getExoplanets();
     }, []);
 
     return (

@@ -1,58 +1,31 @@
 "use client";
 
+import { Astronauts } from "@/components/astronauts";
+import { fetchExoplanetsData, fetchHeroImage, fetchSpaceWeatherAlerts } from "@/services/fetch-datasets";
 import React, { useEffect, useState } from "react";
 
 export default function Home() {
-  const [hero_image, setHeroImage] = useState("/file.svg");
-  const [exoplanets_data, setExoplanetsData] = useState([
-    {
-      id: 1,
-      name: "Kepler-186f",
-      description:
-        "An Earth-size exoplanet in the habitable zone of its star. Placeholder text that will be replaced by API data.",
-    },
-    {
-      id: 2,
-      name: "Proxima Centauri b",
-      description:
-        "A rocky planet orbiting the nearest star to the Sun. This entry is sample text for layout purposes.",
-    },
-  ]);
-
-  const [space_weather_alerts, setSpaceWeatherAlerts] = useState([
-    {
-      id: 1,
-      title: "Solar Flare",
-      level: "Moderate",
-      summary: "Solar flare detected — monitoring for radio blackout potential.",
-      time: "2025-08-24T12:34Z",
-    },
-    {
-      id: 2,
-      title: "Geomagnetic Storm",
-      level: "Minor",
-      summary: "Increased geomagnetic activity; aurora possible at high latitudes.",
-    },
-  ]);
-
-  const [astronauts, setAstronauts] = useState([
-    {
-      id: 1,
-      name: "Mae Jemison",
-      headshot: "/next.svg",
-      bio: "Engineer, physician, and former NASA astronaut. Sample bio text for layout.",
-    },
-    {
-      id: 2,
-      name: "Chris Hadfield",
-      headshot: "/globe.svg",
-      bio: "Canadian astronaut with long-duration spaceflight experience.",
-    },
-  ]);
+  const [hero_image, setHeroImage] = useState();
+  const [exoplanets_data, setExoplanetsData] = useState();
+  const [space_weather_alerts, setSpaceWeatherAlerts] = useState();
 
   useEffect(() => {
-    // Placeholder effect: when you add service functions they can populate the state here.
-    // e.g. fetchHeroImage().then(setHeroImage)
+    const fetchData = async () => {
+      try {
+        const [heroImage, exoplanets, spaceWeather] = await Promise.all([
+          fetchHeroImage(),
+          fetchExoplanetsData(),
+          fetchSpaceWeatherAlerts(),
+        ]);
+        setHeroImage(heroImage);
+        setExoplanetsData(exoplanets);
+        setSpaceWeatherAlerts(spaceWeather);
+        setAstronauts(astronauts);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
   }, []);
 
   return (
@@ -73,25 +46,7 @@ export default function Home() {
         </section>
 
         {/* Astronauts */}
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Current Astronauts</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {astronauts.map((a) => (
-              <article
-                key={a.id}
-                className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 flex flex-col items-center text-center"
-              >
-                <img
-                  src={a.headshot}
-                  alt={`${a.name} headshot`}
-                  className="w-32 h-32 rounded-full object-cover mb-4"
-                />
-                <h3 className="font-medium">{a.name}</h3>
-                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{a.bio}</p>
-              </article>
-            ))}
-          </div>
-        </section>
+        < Astronauts />
 
         {/* Exoplanet Data (text based) */}
         <section>

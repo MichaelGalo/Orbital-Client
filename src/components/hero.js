@@ -10,6 +10,7 @@ export const Hero = () => {
             setHeroImage(image);
         };
         getHeroImage();
+        console.log(hero_image);
     }, []);
     
     return (

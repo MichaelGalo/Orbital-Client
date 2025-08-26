@@ -79,12 +79,12 @@ export const Hero = () => {
 
               <div>
                 <a
-                  href={imageUrl || "#"}
+                  href={"https://apod.nasa.gov/apod/astropix.html"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-block px-3 py-2 bg-sky-600 text-white text-xs rounded hover:bg-sky-700 transition"
                 >
-                  View full image
+                  View full media
                 </a>
               </div>
             </div>

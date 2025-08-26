@@ -8,7 +8,6 @@ export const Hero = () => {
   useEffect(() => {
     const getHeroImage = async () => {
       const response = await fetchHeroImage();
-      console.log("fetchHeroImage returned:", response);
       setHeroData(response[0]);
     };
 

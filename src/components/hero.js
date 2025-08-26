@@ -20,6 +20,8 @@ export const Hero = () => {
   const explanation = heroData?.explanation;
   const date = heroData?.date;
 
+  const formattedDate = date ? new Date(date).toLocaleDateString() : null;
+
   return (
     <section className="rounded-lg overflow-hidden shadow-lg flex flex-col">
       {imageUrl && (
@@ -29,16 +31,23 @@ export const Hero = () => {
           className="w-full h-64 sm:h-96 object-cover"
         />
       )}
-      <div className="p-8 sm:p-16 flex flex-col items-start gap-4 bg-white dark:bg-black">
-        <h1 className="text-4xl sm:text-5xl font-bold">{title || "Welcome to Orbital Client"}</h1>
-        {explanation ? (
-          <p className="text-lg max-w-prose">{explanation}</p>
+
+      <div className="p-6 bg-white/90 dark:bg-black/60 flex flex-col items-center text-center gap-2">
+        {title ? (
+          <h2 className="text-2xl font-semibold leading-tight">{title}</h2>
         ) : (
-          <p className="text-lg">Simplifying the astronomical.</p>
+          <h2 className="text-2xl font-semibold leading-tight">NASA Picture</h2>
         )}
-        <div className="text-sm text-muted-foreground">
-          {date && <span>{date}</span>}
-        </div>
+
+        {formattedDate && (
+          <div className="text-sm text-muted-foreground">{formattedDate}</div>
+        )}
+
+        {explanation ? (
+          <p className="text-lg max-w-prose mt-2">{explanation}</p>
+        ) : (
+          <p className="text-lg mt-2">Simplifying the astronomical.</p>
+        )}
       </div>
     </section>
   );

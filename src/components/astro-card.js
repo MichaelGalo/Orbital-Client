@@ -7,10 +7,8 @@ const AstroCard = ({ astro }) => {
 
     return (
       <article className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden flex flex-col" aria-label={astro.name}>
-        <div
-          className="w-full bg-gray-100 dark:bg-gray-700 flex-shrink-0 overflow-hidden"
-          style={{ aspectRatio: "3/4" }}
-        >
+        <div className="md:col-span-1 bg-gradient-to-br from-sky-500 via-indigo-500 to-purple-600 flex items-center justify-center h-96">
+
           {astro.image_url && !imgError ? (
             <img
               src={astro.image_url}
@@ -20,8 +18,8 @@ const AstroCard = ({ astro }) => {
               onError={() => setImgError(true)}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-500">
-              No image
+            <div className="w-full h-64 md:h-full flex items-center justify-center text-white px-4">
+              No image uploaded
             </div>
           )}
         </div>
@@ -34,7 +32,7 @@ const AstroCard = ({ astro }) => {
           <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">{astro.agency_abbrev} • {astro.agency}</div>
 
           <div className="mt-3 text-sm text-gray-700 dark:text-gray-200 flex-1">
-            <p className="line-clamp-4">{astro.bio || "No bio available."}</p>
+            <p className="line-clamp-6">{astro.bio || "No bio available."}</p>
           </div>
 
           <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-gray-300">

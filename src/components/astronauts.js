@@ -29,7 +29,7 @@ export const Astronauts = () => {
 
   return (
     <section>
-      <h2 className="text-2xl font-semibold mb-4">Astronauts in Space Right Now</h2>
+      <h2 className="text-2xl font-semibold mb-4">Astronauts in Space Right Now: {astronautData.length}</h2>
 
       {loading ? (
         <div className="text-gray-600 dark:text-gray-300">Loading astronauts…</div>

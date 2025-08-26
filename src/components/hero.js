@@ -38,8 +38,8 @@ export const Hero = () => {
             ) : (
               <div className="w-full h-64 md:h-full flex items-center justify-center text-white px-4">
                 <div className="text-center">
-                  <div className="text-2xl font-semibold">NASA Media</div>
-                  <div className="text-sm mt-1">Current Media Type Unsupported</div>
+                  <div className="text-2xl font-semibold">NASA Video</div>
+                  <div className="text-sm mt-1">Current Media Type Unsupported. Click the 'view full media' button to view.</div>
                 </div>
               </div>
             )}
@@ -62,7 +62,7 @@ export const Hero = () => {
 
               <div className="mt-3 text-base text-gray-700 dark:text-gray-200 max-w-prose">
                 {explanation ? (
-                  <p className="line-clamp-5">{explanation}</p>
+                  <p className="line-clamp-none">{explanation}</p>
                 ) : (
                   <p>Simplifying the astronomical.</p>
                 )}

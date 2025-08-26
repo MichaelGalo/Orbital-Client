@@ -43,7 +43,7 @@ const AstroCard = ({ astro }) => {
               <div>{astro.time_in_space ?? "—"}</div>
             </div>
             <div>
-              <div className="font-medium text-gray-800 dark:text-gray-100">EVA / Walks</div>
+              <div className="font-medium text-gray-800 dark:text-gray-100">EVA Time | Space Walks</div>
               <div>{astro.eva_time ?? "—"} • {astro.spacewalks_count ?? 0}</div>
             </div>
           </div>

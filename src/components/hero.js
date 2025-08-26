@@ -18,6 +18,7 @@ export const Hero = () => {
   const title = heroData?.title;
   const explanation = heroData?.explanation;
   const date = heroData?.date;
+  const copyright = heroData?.copyright;
 
   const formattedDate = date ? new Date(date).toLocaleDateString() : null;
 
@@ -43,7 +44,10 @@ export const Hero = () => {
         )}
 
         {explanation ? (
+         <>
           <p className="text-lg max-w-prose mt-2">{explanation}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{copyright}</p>
+        </>
         ) : (
           <p className="text-lg mt-2">Simplifying the astronomical.</p>
         )}

@@ -1,4 +1,4 @@
-const baseUrl = process.env.API_BASE_URL || 'http://localhost:8000';
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
 export const fetchHeroImage = async () => {
   try {
@@ -13,6 +13,7 @@ export const fetchHeroImage = async () => {
     throw error;
   }
 };
+
 export const fetchAstronauts = async () => {
   try {
     const response = await fetch(`${baseUrl}/datasets/1`);

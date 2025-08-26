@@ -14,13 +14,13 @@ export default function Home() {
         < Hero />
 
         {/* Astronauts */}
-        < Astronauts />
+        {/* < Astronauts /> */}
 
         {/* Exoplanet Data (text based) */}
-        < Exoplanets />
+        {/* < Exoplanets /> */}
 
         {/* Space Weather Notifications */}
-        < SpaceWeatherNotifications />
+        {/* < SpaceWeatherNotifications /> */}
       </main>
     </div>
   );

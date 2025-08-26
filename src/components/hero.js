@@ -1,30 +1,45 @@
+"use client"
 import { fetchHeroImage } from "@/services/fetch-datasets";
 import { useEffect, useState } from "react";
 
-
 export const Hero = () => {
-    const [hero_image, setHeroImage] = useState();
-    useEffect(() => {
-        const getHeroImage = async () => {
-            const image = await fetchHeroImage();
-            setHeroImage(image);
-        };
-        getHeroImage();
-        console.log(hero_image);
-    }, []);
-    
-    return (
-        <section className="relative rounded-lg overflow-hidden shadow-lg">
-          <img
-            src={hero_image}
-            alt="Hero background"
-            className="absolute inset-0 w-full h-64 sm:h-96 object-cover opacity-80 dark:opacity-60"
-          />
-          <div className="relative z-10 p-8 sm:p-16 flex flex-col items-start gap-4">
-            <h1 className="text-4xl sm:text-5xl font-bold">Welcome to Orbital Client</h1>
-            <p className="text-lg">Simplifying the astronomical.</p>
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/60 dark:to-black/40 pointer-events-none" />
-        </section>
-    )
-}
+  const [heroData, setHeroData] = useState(null);
+
+  useEffect(() => {
+    const getHeroImage = async () => {
+      const response = await fetchHeroImage();
+      console.log("fetchHeroImage returned:", response);
+      setHeroData(response[0]);
+    };
+
+    getHeroImage();
+  }, []);
+
+  const imageUrl = heroData?.url;
+  const title = heroData?.title;
+  const explanation = heroData?.explanation;
+  const date = heroData?.date;
+
+  return (
+    <section className="rounded-lg overflow-hidden shadow-lg flex flex-col">
+      {imageUrl && (
+        <img
+          src={imageUrl}
+          alt={title || "NASA Picture of the Day"}
+          className="w-full h-64 sm:h-96 object-cover"
+        />
+      )}
+      <div className="p-8 sm:p-16 flex flex-col items-start gap-4 bg-white dark:bg-black">
+        <h1 className="text-4xl sm:text-5xl font-bold">{title || "Welcome to Orbital Client"}</h1>
+        {explanation ? (
+          <p className="text-lg max-w-prose">{explanation}</p>
+        ) : (
+          <p className="text-lg">Simplifying the astronomical.</p>
+        )}
+        <div className="text-sm text-muted-foreground">
+          {date && <span>{date}</span>}
+        </div>
+      </div>
+    </section>
+  );
+};

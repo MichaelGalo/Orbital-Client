@@ -25,7 +25,6 @@ export const Exoplanets = () => {
       try {
         const offset = page * PAGE_SIZE;
         const data = await fetchExoplanetsData(offset, PAGE_SIZE);
-        console.log(data)
         // ignore stale responses
         if (cancelled || currentRequestId !== requestIdRef.current) return;
 

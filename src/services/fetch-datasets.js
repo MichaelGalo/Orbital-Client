@@ -42,7 +42,7 @@ export const fetchSpaceWeatherAlerts = async () => {
 };
 export const fetchExoplanetsData = async (offset, limit) => {
   try {
-    const response = await fetch(`${baseUrl}/datasets/1?offset=${offset}&limit=${limit}`);
+    const response = await fetch(`${baseUrl}/datasets/4?offset=${offset}&limit=${limit}`);
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }

@@ -13,16 +13,9 @@ export default function Home() {
       <div className="p-6 sm:p-10 flex flex-col items-center gap-4 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-100 dark:border-gray-700">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-gray-100 text-center">{"Orbital, simplifying the astronomical."}</h1>
       </div>
-        {/* Hero */}
         < Hero />
-
-        {/* Astronauts */}
         < Astronauts />
-
-        {/* Exoplanet Data (text based) */}
         {/* < Exoplanets /> */}
-
-        {/* Space Weather Notifications */}
         {/* < SpaceWeatherNotifications /> */}
       </main>
     </div>

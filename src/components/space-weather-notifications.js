@@ -12,32 +12,27 @@ export const SpaceWeatherNotifications = () => {
   useEffect(() => {
     const getSpaceWeatherAlerts = async () => {
       const data = await fetchSpaceWeatherAlerts();
-      data.map((alert) => {
-        if (alert.message_type === "CME") {
-          alert.message_type = "Coronal Mass Ejection";
-        } else if (alert.message_type === "CMEAnalysis") {
-          alert.message_type = "Coronal Mass Ejection Analysis";
-        } else if (alert.message_type === "GST") {
-          alert.message_type = "Geomagnetic Storm";
-        } else if (alert.message_type === "IPS") {
-          alert.message_type = "Interplanetary Shock";
-        } else if (alert.message_type === "FLR") {
-          alert.message_type = "Solar Flare";
-        } else if (alert.message_type === "SPE") {
-          alert.message_type = "Solar Particle Event";
-        } else if (alert.message_type === "MPC") {
-          alert.message_type = "Magnetopause Crossing";
-        } else if (alert.message_type === "RBE") {
-          alert.message_type = "Radiation Belt Enhancement";
-        } else if (alert.message_type === "HSS") {
-          alert.message_type = "Hight Speed Stream";
-        } else if (alert.message_type === "Notifications") {
-          alert.message_type = "Notifications";
-        }
-      });
 
-      setSpaceWeatherAlerts(data);
-  setCurrentPage(1);
+      const TYPE_LABELS = {
+        CME: "Coronal Mass Ejection",
+        CMEAnalysis: "Coronal Mass Ejection Analysis",
+        GST: "Geomagnetic Storm",
+        IPS: "Interplanetary Shock",
+        FLR: "Solar Flare",
+        SPE: "Solar Particle Event",
+        MPC: "Magnetopause Crossing",
+        RBE: "Radiation Belt Enhancement",
+        HSS: "High Speed Stream",
+        Notifications: "Notifications",
+      };
+
+      const normalized = data.map((alert) => ({
+        ...alert,
+        message_type: TYPE_LABELS[alert.message_type] ?? alert.message_type,
+      }));
+
+      setSpaceWeatherAlerts(normalized);
+      setCurrentPage(1);
     };
     getSpaceWeatherAlerts();
   }, []);

@@ -15,7 +15,7 @@ export default function Home() {
       </div>
         < Hero />
         < Astronauts />
-        {/* < Exoplanets /> */}
+        < Exoplanets />
         < SpaceWeatherNotifications />
       </main>
     </div>

@@ -57,10 +57,33 @@ export const SpaceWeatherNotifications = () => {
                 </div>
 
                 {/* Render markdown here */}
-                <div className="prose dark:prose-invert max-w-none mt-2">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {alert.messageBody}
-                  </ReactMarkdown>
+                <div className="mt-2 max-w-full overflow-hidden">
+                  <div className="prose dark:prose-invert max-w-full break-words">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        pre: ({ node, children, ...props }) => (
+                          <div className="overflow-auto">
+                            <pre className="whitespace-pre-wrap break-words" {...props}>
+                              {children}
+                            </pre>
+                          </div>
+                        ),
+                        code: ({ node, inline, className, children, ...props }) =>
+                          inline ? (
+                            <code className="whitespace-normal break-words" {...props}>
+                              {children}
+                            </code>
+                          ) : (
+                            <code className="block whitespace-pre-wrap break-words" {...props}>
+                              {children}
+                            </code>
+                          ),
+                      }}
+                    >
+                      {alert.message_body}
+                    </ReactMarkdown>
+                  </div>
                 </div>
               </div>
             </div>

@@ -5,6 +5,9 @@ import remarkGfm from "remark-gfm";
 
 export const SpaceWeatherNotifications = () => {
   const [space_weather_alerts, setSpaceWeatherAlerts] = useState([]);
+  const [selectedAlert, setSelectedAlert] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const getSpaceWeatherAlerts = async () => {
@@ -34,6 +37,7 @@ export const SpaceWeatherNotifications = () => {
       });
 
       setSpaceWeatherAlerts(data);
+  setCurrentPage(1);
     };
     getSpaceWeatherAlerts();
   }, []);
@@ -44,52 +48,120 @@ export const SpaceWeatherNotifications = () => {
         Space Weather Notifications
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {space_weather_alerts.map((alert) => (
+        {(() => {
+          // sort newest-first and slice for pagination
+          const sorted = [...space_weather_alerts].sort((a, b) =>
+            new Date(b.message_issue_time) - new Date(a.message_issue_time)
+          );
+          const startIdx = (currentPage - 1) * itemsPerPage;
+          const pageAlerts = sorted.slice(startIdx, startIdx + itemsPerPage);
+          return pageAlerts.map((alert) => (
           <div
             key={alert.message_id}
-            className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow"
+            role="button"
+            tabIndex={0}
+            onClick={() => setSelectedAlert(alert)}
+            onKeyDown={(e) => e.key === "Enter" && setSelectedAlert(alert)}
+            className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow cursor-pointer hover:shadow-md focus:shadow-md outline-none"
           >
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-medium">{alert.message_type}</h3>
-                <div className="text-sm text-gray-600 dark:text-gray-300">
-                  {alert.message_issue_time}
-                </div>
-
-                {/* Render markdown here */}
-                <div className="mt-2 max-w-full overflow-hidden">
-                  <div className="prose dark:prose-invert max-w-full break-words">
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        pre: ({ node, children, ...props }) => (
-                          <div className="overflow-auto">
-                            <pre className="whitespace-pre-wrap break-words" {...props}>
-                              {children}
-                            </pre>
-                          </div>
-                        ),
-                        code: ({ node, inline, className, children, ...props }) =>
-                          inline ? (
-                            <code className="whitespace-normal break-words" {...props}>
-                              {children}
-                            </code>
-                          ) : (
-                            <code className="block whitespace-pre-wrap break-words" {...props}>
-                              {children}
-                            </code>
-                          ),
-                      }}
-                    >
-                      {alert.message_body}
-                    </ReactMarkdown>
-                  </div>
-                </div>
+            <div className="flex items-center justify-between">
+              <h3 className="font-medium text-sm truncate">{alert.message_type}</h3>
+              <div className="text-xs text-gray-600 dark:text-gray-300 ml-2">
+                {alert.message_issue_time}
               </div>
             </div>
           </div>
-        ))}
+          ));
+        })()}
       </div>
+
+      {/* Pagination controls */}
+      {space_weather_alerts.length > itemsPerPage && (
+        <div className="mt-4 flex items-center justify-center space-x-3">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded bg-gray-100 dark:bg-gray-700 text-sm disabled:opacity-50"
+            aria-label="Previous page"
+          >
+            Prev
+          </button>
+
+          <div className="text-sm text-gray-700 dark:text-gray-300">
+            Page {currentPage} of {Math.max(1, Math.ceil(space_weather_alerts.length / itemsPerPage))}
+          </div>
+
+          <button
+            onClick={() =>
+              setCurrentPage((p) => Math.min(Math.ceil(space_weather_alerts.length / itemsPerPage), p + 1))
+            }
+            disabled={currentPage >= Math.ceil(space_weather_alerts.length / itemsPerPage)}
+            className="px-3 py-1 rounded bg-gray-100 dark:bg-gray-700 text-sm disabled:opacity-50"
+            aria-label="Next page"
+          >
+            Next
+          </button>
+        </div>
+      )}
+
+      {/* Modal for selected alert */}
+      {selectedAlert && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+          onClick={() => setSelectedAlert(null)}
+        >
+          <div
+            className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-2xl p-6 overflow-auto"
+            style={{ maxHeight: "80vh" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-lg font-semibold">{selectedAlert.message_type}</h3>
+                <div className="text-sm text-gray-600 dark:text-gray-300">
+                  {selectedAlert.message_issue_time}
+                </div>
+              </div>
+              <button
+                aria-label="Close"
+                className="ml-4 text-gray-700 dark:text-gray-200 hover:text-gray-900"
+                onClick={() => setSelectedAlert(null)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="mt-4">
+              <div className="prose dark:prose-invert max-w-full break-words">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    pre: ({ node, children, ...props }) => (
+                      <div className="overflow-auto">
+                        <pre className="whitespace-pre-wrap break-words" {...props}>
+                          {children}
+                        </pre>
+                      </div>
+                    ),
+                    code: ({ node, inline, className, children, ...props }) =>
+                      inline ? (
+                        <code className="whitespace-normal break-words" {...props}>
+                          {children}
+                        </code>
+                      ) : (
+                        <code className="block whitespace-pre-wrap break-words" {...props}>
+                          {children}
+                        </code>
+                      ),
+                  }}
+                >
+                  {selectedAlert.message_body}
+                </ReactMarkdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

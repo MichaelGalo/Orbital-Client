@@ -19,7 +19,7 @@ const AstroCard = ({ astro }) => {
             />
           ) : (
             <div className="w-full h-64 md:h-full flex items-center justify-center text-white px-4">
-              No image uploaded
+              No image available
             </div>
           )}
         </div>

@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 export const Exoplanets = () => {
   const PAGE_SIZE = 15;
 
-  // UI state
-  const [page, setPage] = useState(0); // zero-indexed pages
+  const [page, setPage] = useState(0);
   const [exoplanetsData, setExoplanetsData] = useState([]);
   const [allExoplanets, setAllExoplanets] = useState(null);
   const [selectedPlanet, setSelectedPlanet] = useState(null);
@@ -14,7 +13,6 @@ export const Exoplanets = () => {
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
 
-  // Fetch entire dataset once and paginate client-side.
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -174,30 +172,75 @@ export const Exoplanets = () => {
           </div>
 
           {/* Render full object as ordered JSON string */}
-          <div className="mt-4 bg-gray-50 dark:bg-gray-900 p-3 rounded text-sm font-mono">
-            <pre className="whitespace-pre-wrap">{
+          <div className="mt-4 bg-gray-50 dark:bg-gray-900 p-3 rounded text-sm">
+            {
               (() => {
+                // normalize selectedPlanet to an object (handles string payloads)
                 const original = typeof selectedPlanet === 'string' ? (() => {
                   try { return JSON.parse(selectedPlanet); } catch { return { value: selectedPlanet }; }
                 })() : selectedPlanet || {};
-                const preferred = [
-                  "planet_name",
-                  "discovery_year",
-                  "controversial_flag",
-                  "discovery_method",
-                  "discovery_facility",
-                  "discovery_instrument",
-                  "orbital_period_days",
-                  "radius_earth_radii",
-                  "star_radius_solar_radii",
-                  "orbital_semi_major_axis_in_au",
-                ];
-                const ordered = {};
-                preferred.forEach((k) => { if (Object.prototype.hasOwnProperty.call(original, k)) ordered[k] = original[k]; });
-                Object.keys(original).forEach((k) => { if (!Object.prototype.hasOwnProperty.call(ordered, k)) ordered[k] = original[k]; });
-                return JSON.stringify(ordered, null, 2);
+
+                const fmt = (val) => {
+                  if (val === null || val === undefined || val === "") return '—';
+                  if (typeof val === 'boolean') return val ? 'Yes' : 'No';
+                  return String(val);
+                };
+
+                return (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <div className="text-xs text-gray-500">Name</div>
+                      <div className="font-medium text-gray-900 dark:text-gray-100">{fmt(original.planet_name || original.name)}</div>
+                    </div>
+
+                    <div>
+                      <div className="text-xs text-gray-500">Discovery year</div>
+                      <div className="text-sm text-gray-800 dark:text-gray-200">{fmt(original.discovery_year)}</div>
+                    </div>
+
+                    <div>
+                      <div className="text-xs text-gray-500">Discovery method</div>
+                      <div className="text-sm text-gray-800 dark:text-gray-200">{fmt(original.discovery_method)}</div>
+                    </div>
+
+                    <div>
+                      <div className="text-xs text-gray-500">Discovery facility</div>
+                      <div className="text-sm text-gray-800 dark:text-gray-200">{fmt(original.discovery_facility)}</div>
+                    </div>
+
+                    <div>
+                      <div className="text-xs text-gray-500">Instrument</div>
+                      <div className="text-sm text-gray-800 dark:text-gray-200">{fmt(original.discovery_instrument)}</div>
+                    </div>
+
+                    <div>
+                      <div className="text-xs text-gray-500">Controversial?</div>
+                      <div className="text-sm text-gray-800 dark:text-gray-200">{fmt(original.controversial_flag)}</div>
+                    </div>
+
+                    <div>
+                      <div className="text-xs text-gray-500">Orbital period (days)</div>
+                      <div className="text-sm text-gray-800 dark:text-gray-200">{fmt(original.orbital_period_days)}</div>
+                    </div>
+
+                    <div>
+                      <div className="text-xs text-gray-500">Semi-major axis (AU)</div>
+                      <div className="text-sm text-gray-800 dark:text-gray-200">{fmt(original.orbital_semi_major_axis_in_au)}</div>
+                    </div>
+
+                    <div>
+                      <div className="text-xs text-gray-500">Radius (Earth radii)</div>
+                      <div className="text-sm text-gray-800 dark:text-gray-200">{fmt(original.radius_earth_radii)}</div>
+                    </div>
+
+                    <div>
+                      <div className="text-xs text-gray-500">Star radius (Solar radii)</div>
+                      <div className="text-sm text-gray-800 dark:text-gray-200">{fmt(original.star_radius_solar_radii)}</div>
+                    </div>
+                  </div>
+                );
               })()
-            }</pre>
+            }
           </div>
         </div>
       </div>

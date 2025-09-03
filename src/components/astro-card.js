@@ -1,11 +1,16 @@
 "use client"
 
 import { useState } from "react";
+import AstroModal from "./astro-modal";
 
 const AstroCard = ({ astro }) => {
     const [imgError, setImgError] = useState(false);
+    const [open, setOpen] = useState(false);
+    const openModal = () => setOpen(true);
+    const closeModal = () => setOpen(false);
 
     return (
+      <>
       <article className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden flex flex-col" aria-label={astro.name}>
         <div className="md:col-span-1 bg-gradient-to-br from-sky-500 via-indigo-500 to-purple-600 flex items-center justify-center h-96">
 
@@ -47,19 +52,19 @@ const AstroCard = ({ astro }) => {
           </div>
 
           <div className="mt-4">
-            {astro.wiki && (
-              <a
-                href={astro.wiki}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+            <div className="mt-2">
+              <button
+                onClick={openModal}
+                className="px-3 py-1 rounded bg-gray-100 dark:bg-gray-700 text-sm disabled:opacity-50 hover:bg-gray-200 dark:hover:bg-gray-600"
               >
-                Learn more
-              </a>
-            )}
+                View full bio
+              </button>
+            </div>
           </div>
         </div>
       </article>
+      {open && <AstroModal astro={astro} onClose={closeModal} />}
+      </>
     );
   };
 

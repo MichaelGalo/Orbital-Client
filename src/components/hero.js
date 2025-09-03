@@ -2,9 +2,11 @@
 
 import { fetchHeroImage } from "@/services/fetch-datasets";
 import { useEffect, useState } from "react";
+import Modal from "./modal";
 
 export const Hero = () => {
   const [heroData, setHeroData] = useState(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const getHeroImage = async () => {
@@ -15,13 +17,7 @@ export const Hero = () => {
     getHeroImage();
   }, []);
 
-  const imageUrl = heroData?.url;
-  const title = heroData?.title;
-  const explanation = heroData?.explanation;
-  const date = heroData?.date;
-  const copyright = heroData?.copyright;
-
-  const formattedDate = date ? new Date(date).toLocaleDateString() : null;
+  const formattedDate = heroData?.date ? new Date(heroData?.date).toLocaleDateString() : null;
 
   return (
     <section className="w-full">
@@ -29,10 +25,10 @@ export const Hero = () => {
         <div className="grid grid-cols-1 md:grid-cols-3">
           {/* left: media */}
           <div className="md:col-span-1 bg-gradient-to-br from-sky-500 via-indigo-500 to-purple-600 flex items-center justify-center">
-            {imageUrl ? (
+            {heroData?.url ? (
               <img
-                src={imageUrl}
-                alt={title || "NASA Picture of the Day"}
+                src={heroData?.url}
+                alt={heroData?.title || "NASA Picture of the Day"}
                 className="w-full h-64 md:h-full object-cover block"
               />
             ) : (
@@ -50,7 +46,7 @@ export const Hero = () => {
             <div>
               <div className="flex items-start justify-between gap-4">
                 <h2 className="text-3xl sm:text-4xl font-extrabold leading-tight text-gray-900 dark:text-gray-100">
-                  {title || "NASA Picture"}
+                  {heroData?.title || "NASA Picture"}
                 </h2>
 
                 {formattedDate && (
@@ -61,8 +57,8 @@ export const Hero = () => {
               </div>
 
               <div className="mt-3 text-base text-gray-700 dark:text-gray-200 max-w-prose">
-                {explanation ? (
-                  <p className="line-clamp-none">{explanation}</p>
+                {heroData?.explanation ? (
+                  <p className="line-clamp-none">{heroData?.explanation}</p>
                 ) : (
                   <p>Simplifying the astronomical.</p>
                 )}
@@ -72,25 +68,48 @@ export const Hero = () => {
             <div className="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
               <div className="flex items-center gap-3">
                 <span className="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs">NASA APOD</span>
-                {copyright && (
-                  <span className="text-xs text-gray-500 dark:text-gray-400">© {copyright}</span>
+                {heroData?.copyright && (
+                  <span className="text-xs text-gray-500 dark:text-gray-400">© {heroData?.copyright}</span>
                 )}
               </div>
 
-              <div>
-                <a
-                  href={"https://apod.nasa.gov/apod/astropix.html"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block px-3 py-2 bg-sky-600 text-white text-xs rounded hover:bg-sky-700 transition"
-                >
-                  View full media
-                </a>
+              <div className="flex items-center gap-2">
+                {heroData?.url ? (
+                  <button
+                    onClick={() => setOpen(true)}
+                    aria-label="View full image"
+                    className="inline-block px-3 py-2 bg-sky-600 text-white text-xs rounded hover:bg-sky-700 transition"
+                  >
+                    View full media
+                  </button>
+                ) : (
+                  <a
+                    href={"https://apod.nasa.gov/apod/astropix.html"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block px-3 py-2 border border-gray-200 dark:border-gray-700 text-xs rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                  >
+                    View Media at NASA
+                  </a>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Modal to display full image only */}
+      {open && heroData?.url && (
+        <Modal isOpen={open} onClose={() => setOpen(false)} className="max-w-5xl" ariaLabel={heroData?.title}>
+          <div className="w-full flex items-center justify-center">
+            <img
+              src={heroData?.url}
+              alt={heroData?.title || "NASA Picture of the Day"}
+              className="w-full h-auto max-h-[85vh] object-contain"
+            />
+          </div>
+        </Modal>
+      )}
     </section>
   );
 };

@@ -4,7 +4,6 @@ import { useState } from "react";
 import Modal from "../modal";
 
 const AstroCard = ({ astro }) => {
-    const [imgError, setImgError] = useState(false);
     const [open, setOpen] = useState(false);
     const openModal = () => setOpen(true);
     const closeModal = () => setOpen(false);
@@ -14,7 +13,7 @@ const AstroCard = ({ astro }) => {
       <article className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden flex flex-col" aria-label={astro.name}>
         <div className="md:col-span-1 bg-gradient-to-br from-sky-500 via-indigo-500 to-purple-600 flex items-center justify-center h-96">
 
-          {astro.image_url && !imgError ? (
+          {astro.image_url ? (
             <img
               src={astro.image_url}
               alt={`${astro.name} headshot`}
@@ -63,6 +62,8 @@ const AstroCard = ({ astro }) => {
           </div>
         </div>
       </article>
+
+      {/* Modal */}
       {open && (
         <Modal isOpen={open} onClose={closeModal} title={astro.name}>
           <div className="text-sm text-gray-800 dark:text-gray-200">

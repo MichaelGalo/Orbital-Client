@@ -1,39 +1,37 @@
 import { fetchSpaceWeatherAlerts } from "@/services/fetch-datasets";
 import { useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import SpaceWeatherModal from "./space-weather-modal";
 
 export const SpaceWeatherNotifications = () => {
   const [space_weather_alerts, setSpaceWeatherAlerts] = useState([]);
+  const [selectedAlert, setSelectedAlert] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const getSpaceWeatherAlerts = async () => {
       const data = await fetchSpaceWeatherAlerts();
-      data.map((alert) => {
-        if (alert.message_type === "CME") {
-          alert.message_type = "Coronal Mass Ejection";
-        } else if (alert.message_type === "CMEAnalysis") {
-          alert.message_type = "Coronal Mass Ejection Analysis";
-        } else if (alert.message_type === "GST") {
-          alert.message_type = "Geomagnetic Storm";
-        } else if (alert.message_type === "IPS") {
-          alert.message_type = "Interplanetary Shock";
-        } else if (alert.message_type === "FLR") {
-          alert.message_type = "Solar Flare";
-        } else if (alert.message_type === "SPE") {
-          alert.message_type = "Solar Particle Event";
-        } else if (alert.message_type === "MPC") {
-          alert.message_type = "Magnetopause Crossing";
-        } else if (alert.message_type === "RBE") {
-          alert.message_type = "Radiation Belt Enhancement";
-        } else if (alert.message_type === "HSS") {
-          alert.message_type = "Hight Speed Stream";
-        } else if (alert.message_type === "Notifications") {
-          alert.message_type = "Notifications";
-        }
-      });
 
-      setSpaceWeatherAlerts(data);
+      const TYPE_LABELS = {
+        CME: "Coronal Mass Ejection",
+        CMEAnalysis: "Coronal Mass Ejection Analysis",
+        GST: "Geomagnetic Storm",
+        IPS: "Interplanetary Shock",
+        FLR: "Solar Flare",
+        SPE: "Solar Particle Event",
+        MPC: "Magnetopause Crossing",
+        RBE: "Radiation Belt Enhancement",
+        HSS: "High Speed Stream",
+        Notifications: "Notifications",
+      };
+
+      const expanded_labels = data.map((alert) => ({
+        ...alert,
+        message_type: TYPE_LABELS[alert.message_type] ?? alert.message_type,
+      }));
+
+      setSpaceWeatherAlerts(expanded_labels);
+      setCurrentPage(1);
     };
     getSpaceWeatherAlerts();
   }, []);
@@ -44,52 +42,63 @@ export const SpaceWeatherNotifications = () => {
         Space Weather Notifications
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {space_weather_alerts.map((alert) => (
+        {(() => {
+          // sort newest-first and slice for pagination
+          const sorted = [...space_weather_alerts].sort((a, b) =>
+            new Date(b.message_issue_time) - new Date(a.message_issue_time)
+          );
+          const startIdx = (currentPage - 1) * itemsPerPage;
+          const pageAlerts = sorted.slice(startIdx, startIdx + itemsPerPage);
+          return pageAlerts.map((alert) => (
           <div
             key={alert.message_id}
-            className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow"
+            role="button"
+            tabIndex={0}
+            onClick={() => setSelectedAlert(alert)}
+            onKeyDown={(e) => e.key === "Enter" && setSelectedAlert(alert)}
+            className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow cursor-pointer hover:shadow-md focus:shadow-md outline-none"
           >
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-medium">{alert.message_type}</h3>
-                <div className="text-sm text-gray-600 dark:text-gray-300">
-                  {alert.message_issue_time}
-                </div>
-
-                {/* Render markdown here */}
-                <div className="mt-2 max-w-full overflow-hidden">
-                  <div className="prose dark:prose-invert max-w-full break-words">
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        pre: ({ node, children, ...props }) => (
-                          <div className="overflow-auto">
-                            <pre className="whitespace-pre-wrap break-words" {...props}>
-                              {children}
-                            </pre>
-                          </div>
-                        ),
-                        code: ({ node, inline, className, children, ...props }) =>
-                          inline ? (
-                            <code className="whitespace-normal break-words" {...props}>
-                              {children}
-                            </code>
-                          ) : (
-                            <code className="block whitespace-pre-wrap break-words" {...props}>
-                              {children}
-                            </code>
-                          ),
-                      }}
-                    >
-                      {alert.message_body}
-                    </ReactMarkdown>
-                  </div>
-                </div>
+            <div className="flex items-center justify-between">
+              <h3 className="font-medium text-sm truncate">{alert.message_type}</h3>
+              <div className="text-xs text-gray-600 dark:text-gray-300 ml-2">
+                {alert.message_issue_time}
               </div>
             </div>
           </div>
-        ))}
+          ));
+        })()}
       </div>
+
+      {/* Pagination controls */}
+      {space_weather_alerts.length > itemsPerPage && (
+        <div className="mt-4 flex items-center justify-center space-x-3">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded bg-gray-100 dark:bg-gray-700 text-sm disabled:opacity-50"
+            aria-label="Previous page"
+          >
+            Prev
+          </button>
+
+          <div className="text-sm text-gray-700 dark:text-gray-300">
+            Page {currentPage} of {Math.max(1, Math.ceil(space_weather_alerts.length / itemsPerPage))}
+          </div>
+
+          <button
+            onClick={() =>
+              setCurrentPage((p) => Math.min(Math.ceil(space_weather_alerts.length / itemsPerPage), p + 1))
+            }
+            disabled={currentPage >= Math.ceil(space_weather_alerts.length / itemsPerPage)}
+            className="px-3 py-1 rounded bg-gray-100 dark:bg-gray-700 text-sm disabled:opacity-50"
+            aria-label="Next page"
+          >
+            Next
+          </button>
+        </div>
+      )}
+
+  <SpaceWeatherModal selectedAlert={selectedAlert} onClose={() => setSelectedAlert(null)} />
     </section>
   );
 };

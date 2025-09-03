@@ -9,22 +9,9 @@ export const Astronauts = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let mounted = true;
-    const getAstronauts = async () => {
-      try {
-        const data = await fetchAstronauts();
-        if (mounted) setAstronautData(Array.isArray(data) ? data : []);
-      } catch (e) {
-        console.error("Failed to fetch astronauts", e);
-        if (mounted) setAstronautData([]);
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-    getAstronauts();
-    return () => {
-      mounted = false;
-    };
+    fetchAstronauts()
+      .then((data) => setAstronautData(data))
+      .finally(() => setLoading(false));
   }, []);
 
   return (

@@ -26,12 +26,12 @@ export const SpaceWeatherNotifications = () => {
         Notifications: "Notifications",
       };
 
-      const normalized = data.map((alert) => ({
+      const expanded_labels = data.map((alert) => ({
         ...alert,
         message_type: TYPE_LABELS[alert.message_type] ?? alert.message_type,
       }));
 
-      setSpaceWeatherAlerts(normalized);
+      setSpaceWeatherAlerts(expanded_labels);
       setCurrentPage(1);
     };
     getSpaceWeatherAlerts();

@@ -3,7 +3,7 @@ import { fetchBatchedExoplanets } from "@/services/fetch-datasets";
 import { useEffect, useState } from "react";
 import ExoplanetModal from "./exoplanet-modal";
 
-export const Exoplanets = () => {
+export const InspectExoplanets = () => {
   const page_size = 15;
 
   const [page, setPage] = useState(0);
@@ -54,12 +54,12 @@ export const Exoplanets = () => {
   return (
     <>
       <section>
-        <h2 className="text-2xl font-semibold mb-4">Discover Exoplanets</h2>
+        <h2 className="text-2xl font-semibold mb-4">Inspect Exoplanets</h2>
 
         <div className="space-y-4 bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
           <div className="flex items-center justify-between mb-4">
               <div className="text-sm text-gray-700 dark:text-gray-300">
-              Page {page + 1}
+              Page {page + 1} / {Math.ceil(allExoplanets.length / page_size)}
             </div>
             <div className="space-x-2">
               <button

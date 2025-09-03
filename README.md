@@ -1,13 +1,19 @@
 # Orbital Client
 
-This is a client to display data from the Orbital API, simplifying the astronomical.
+A front-end data-visualization client for the Orbital data engineering capstone back end.
 
-## Getting Started
+This repository is the user-facing client used to view cleaned datasets served by the Orbital Data Pipeline. Reference the link below to the Orbital Data Pipeline for Details about the project & data sources
 
-First, run the development server:
+## Quick start
+
+Install dependencies and run the development server:
 
 ```bash
+npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 in your browser.
+
+## Links
+- [Orbital Data Pipeline](https://github.com/MichaelGalo/Orbital-Data-Pipeline)

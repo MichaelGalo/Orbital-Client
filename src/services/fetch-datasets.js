@@ -27,6 +27,7 @@ export const fetchAstronauts = async () => {
     throw error;
   }
 };
+
 export const fetchSpaceWeatherAlerts = async () => {
   try {
     const response = await fetch(`${baseUrl}/datasets/3`);
@@ -40,6 +41,7 @@ export const fetchSpaceWeatherAlerts = async () => {
     throw error;
   }
 };
+
 export const fetchExoplanetsData = async (offset, limit) => {
   try {
     const response = await fetch(`${baseUrl}/datasets/4?offset=${offset}&limit=${limit}`);
@@ -52,4 +54,14 @@ export const fetchExoplanetsData = async (offset, limit) => {
     console.error('Error fetching exoplanet data:', error);
     throw error;
   }
+};
+
+export const fetchBatchedExoplanets = async (batchSize) => {
+  const allResults = [];
+  for (let offset = 0; ; offset += batchSize) {
+    const batch = await fetchExoplanetsData(offset, batchSize);
+  if (batch.length < batchSize || batch.length === 0) break;
+    allResults.push(...batch);
+  }
+  return allResults;
 };

@@ -1,9 +1,9 @@
 "use client";
 
-import { Astronauts } from "@/components/astronauts";
-import { InspectExoplanets } from "@/components/inspect-exoplanets";
+import { Astronauts } from "@/components/astronauts/astronauts";
+import { InspectExoplanets } from "@/components/exoplanets/inspect-exoplanets";
 import { Hero } from "@/components/hero";
-import { SpaceWeatherNotifications } from "@/components/space-weather-notifications";
+import { SpaceWeatherNotifications } from "@/components/space-weather-notifications/space-weather-notifications";
 
 export default function Home() {
 

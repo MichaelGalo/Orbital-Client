@@ -1,38 +1,16 @@
 "use client";
-import { fetchBatchedExoplanets } from "@/services/fetch-datasets";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import ExoplanetModal from "./exoplanet-model";
-import ExoplanetHistogram from "./exoplanet-histogram";
 
-export const InspectExoplanets = () => {
+export const InspectExoplanets = ({ allExoplanets = [], isLoading = false }) => {
   const page_size = 15;
-
   const [page, setPage] = useState(0);
-  const [exoplanetsData, setExoplanetsData] = useState([]);
-  const [allExoplanets, setAllExoplanets] = useState([]);
   const [selectedPlanet, setSelectedPlanet] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [hasMore, setHasMore] = useState(true);
-
-  useEffect(() => {
-    setIsLoading(true);
-    setError(null);
-
-    fetchBatchedExoplanets(1000)
-      .then((allResults) => {
-        setAllExoplanets(allResults);
-        setExoplanetsData(allResults.slice(0, page_size));
-        setHasMore(allResults.length > page_size);
-        setIsLoading(false);
-      });
-  }, []);
-
-  useEffect(() => {
-    const startIndex = page * page_size;
-    setExoplanetsData(allExoplanets.slice(startIndex, startIndex + page_size));
-    setHasMore(allExoplanets.length > startIndex + page_size);
-  }, [page, allExoplanets]);
+  const startIndex = page * page_size;
+  const exoplanetsData = useMemo(() => {
+    return allExoplanets.slice(startIndex, startIndex + page_size);
+  }, [allExoplanets, startIndex]);
+  const hasMore = allExoplanets.length > startIndex + page_size;
 
   const goNext = () => {
     if (!hasMore) return;
@@ -43,26 +21,15 @@ export const InspectExoplanets = () => {
     setPage((page) => Math.max(0, page - 1));
   };
 
+  useEffect(() => {
+      const maxPage = Math.max(0, Math.ceil(allExoplanets.length / page_size) - 1);
+      if (page > maxPage) setPage(maxPage);
+    }, [allExoplanets, page]);
+
   return (
     <>
       <section>
-        <h2 className="text-2xl font-semibold mb-4">Inspect Exoplanets</h2>
-
-        {/* Histogram: number of discoveries by year */}
-        <div className="mb-6">
-          {/* derive numeric discovery years from the full dataset */}
-          <ExoplanetHistogram
-            data={allExoplanets
-              .map((planet) => {
-                const y = Number(planet.discovery_year);
-                return Number.isFinite(y) ? y : NaN;
-              })
-              .filter((value) => !Number.isNaN(value))}
-            width={900}
-            height={300}
-            bins={Math.min(new Set(allExoplanets.map((planet) => planet.discovery_year).filter(Boolean)).size || 10, 80)}
-          />
-        </div>
+        <h2 className="text-2xl font-semibold mb-4">Inspect Individual Exoplanets</h2>
 
         <div className="space-y-4 bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
           <div className="flex items-center justify-between mb-4">
@@ -88,10 +55,9 @@ export const InspectExoplanets = () => {
           </div>
 
         {isLoading && <div className="text-sm text-gray-500">Loading…</div>}
-        {error && <div className="text-sm text-red-500">Error: {error}</div>}
 
         <div>
-          {exoplanetsData.length === 0 && !isLoading && !error ? (
+          {exoplanetsData.length === 0 && !isLoading ? (
             <div className="text-sm text-gray-500">No exoplanets found.</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

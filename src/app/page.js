@@ -1,6 +1,7 @@
 "use client";
 
 import { Astronauts } from "@/components/astronauts/astronauts";
+import Exoplanets from "@/components/exoplanets/exoplanets";
 import { InspectExoplanets } from "@/components/exoplanets/inspect-exoplanets";
 import { Hero } from "@/components/hero";
 import { SpaceWeatherNotifications } from "@/components/space-weather-notifications/space-weather-notifications";
@@ -16,7 +17,7 @@ export default function Home() {
         < Hero />
         < Astronauts />
         < SpaceWeatherNotifications />
-        < InspectExoplanets />
+        <Exoplanets />
       </main>
     </div>
   );

@@ -57,7 +57,8 @@ const ExoplanetHistogram = ({
       .attr("viewBox", `0 0 ${measuredWidth} ${height}`)
       .attr("preserveAspectRatio", "xMidYMid meet");
 
-    const group = svg.append("g")
+    const group = svg
+      .append("g")
       .attr("transform", `translate(${effectiveMargin.left},${effectiveMargin.top})`);
 
     // Tooltip (shared)
@@ -81,75 +82,139 @@ const ExoplanetHistogram = ({
         let key = typeof d === "number" ? labels[Math.floor(d)] : String(d);
         if (key && counts.has(key)) counts.set(key, counts.get(key) + 1);
       });
-      const binsData = labels.map((label) => ({ label, count: counts.get(label) || 0 }));
+      const binsData = labels.map((label) => ({
+        label,
+        count: counts.get(label) || 0,
+      }));
 
       const x = d3.scaleBand().domain(labels).range([0, innerWidth]).padding(0.1);
-      const y = d3.scaleLinear().domain([0, d3.max(binsData, (b) => b.count) || 1]).range([innerHeight, 0]);
+      const y = d3
+        .scaleLinear()
+        .domain([0, d3.max(binsData, (b) => b.count) || 1])
+        .range([innerHeight, 0]);
 
-      const bars = group.selectAll(".bar").data(binsData).join("g").attr("class", "bar");
+      const bars = group
+        .selectAll(".bar")
+        .data(binsData)
+        .join("g")
+        .attr("class", "bar");
 
-      bars.append("rect")
+      bars
+        .append("rect")
         .attr("x", (d) => x(d.label))
         .attr("y", (d) => y(d.count))
         .attr("width", x.bandwidth())
         .attr("height", (d) => innerHeight - y(d.count))
         .attr("fill", CHART_CONFIG.barFill);
 
-      group.append("g")
+      const xAxis = group
+        .append("g")
         .attr("transform", `translate(0,${innerHeight})`)
         .call(d3.axisBottom(x))
-        .call((s) => s.selectAll("text")
-          .attr("font-size", CHART_CONFIG.tickFontSize)
-          .attr("text-anchor", "end")
-          .attr("transform", "rotate(-25)"));
+        .call((s) =>
+          s
+            .selectAll("text")
+            .attr("font-size", CHART_CONFIG.tickFontSize)
+            .attr("text-anchor", "end")
+            .attr("transform", "rotate(-25)")
+        );
 
-      group.append("g")
+      group
+        .append("g")
         .call(d3.axisLeft(y).ticks(5).tickFormat(resolvedTickFormat))
         .call((s) => s.selectAll("text").attr("font-size", CHART_CONFIG.tickFontSize));
 
-      bars.on("mousemove", (event, d) => {
-        const [mx, my] = d3.pointer(event);
-        tooltip
-          .style("left", `${mx + margin.left + 10}px`)
-          .style("top", `${my + margin.top - 10}px`)
-          .style("display", "block")
-          .text(`${d.label}: ${resolvedTickFormat(d.count)}`);
-      }).on("mouseleave", () => tooltip.style("display", "none"));
+      // hover on bars
+      bars
+        .on("mousemove", (event, d) => {
+          const [mx, my] = d3.pointer(event);
+          tooltip
+            .style("left", `${mx + margin.left + 10}px`)
+            .style("top", `${my + margin.top - 10}px`)
+            .style("display", "block")
+            .text(`${d.label}: ${resolvedTickFormat(d.count)}`);
+        })
+        .on("mouseleave", () => tooltip.style("display", "none"));
 
+      // hover on x-axis labels
+      xAxis
+        .selectAll("text")
+        .on("mousemove", (event, label) => {
+          const count = binsData.find((b) => b.label === label)?.count ?? 0;
+          const [mx, my] = d3.pointer(event, container);
+          tooltip
+            .style("left", `${mx + margin.left + 10}px`)
+            .style("top", `${my + margin.top - 10}px`)
+            .style("display", "block")
+            .text(`${label}: ${resolvedTickFormat(count)}`);
+        })
+        .on("mouseleave", () => tooltip.style("display", "none"));
     } else {
       // --- numeric branch ---
       const x = d3.scaleLinear().domain(d3.extent(data)).nice().range([0, innerWidth]);
       const histogram = d3.bin().domain(x.domain()).thresholds(bins);
       const binsData = histogram(data);
 
-      const y = d3.scaleLinear().domain([0, d3.max(binsData, (b) => b.length) || 1]).range([innerHeight, 0]);
+      const y = d3
+        .scaleLinear()
+        .domain([0, d3.max(binsData, (b) => b.length) || 1])
+        .range([innerHeight, 0]);
 
       const bar = group.selectAll(".bar").data(binsData).join("g").attr("class", "bar");
 
-      bar.append("rect")
+      bar
+        .append("rect")
         .attr("x", (bin) => x(bin.x0) + 1)
         .attr("y", (bin) => y(bin.length))
         .attr("width", (bin) => Math.max(0, x(bin.x1) - x(bin.x0) - 1))
         .attr("height", (bin) => innerHeight - y(bin.length))
         .attr("fill", CHART_CONFIG.barFill);
 
-      group.append("g")
+      const xAxis = group
+        .append("g")
         .attr("transform", `translate(0,${innerHeight})`)
         .call(d3.axisBottom(x).ticks(Math.min(bins, 10)).tickFormat(resolvedTickFormat))
         .call((s) => s.selectAll("text").attr("font-size", CHART_CONFIG.tickFontSize));
 
-      group.append("g")
+      group
+        .append("g")
         .call(d3.axisLeft(y).ticks(5).tickFormat(resolvedTickFormat))
         .call((s) => s.selectAll("text").attr("font-size", CHART_CONFIG.tickFontSize));
 
-      bar.on("mousemove", (event, bin) => {
-        const [mx, my] = d3.pointer(event);
-        tooltip
-          .style("left", `${mx + margin.left + 10}px`)
-          .style("top", `${my + margin.top - 10}px`)
-          .style("display", "block")
-          .text(`${resolvedTooltipFormat(bin.x0)} – ${resolvedTooltipFormat(bin.x1)}: ${resolvedTickFormat(bin.length)}`);
-      }).on("mouseleave", () => tooltip.style("display", "none"));
+      // hover on bars
+      bar
+        .on("mousemove", (event, bin) => {
+          const [mx, my] = d3.pointer(event);
+          tooltip
+            .style("left", `${mx + margin.left + 10}px`)
+            .style("top", `${my + margin.top - 10}px`)
+            .style("display", "block")
+            .text(
+              `${resolvedTooltipFormat(bin.x0)} – ${resolvedTooltipFormat(
+                bin.x1
+              )}: ${resolvedTickFormat(bin.length)}`
+            );
+        })
+        .on("mouseleave", () => tooltip.style("display", "none"));
+
+      // hover on x-axis labels
+      xAxis
+        .selectAll("text")
+        .on("mousemove", (event, tickValue) => {
+          const bin = binsData.find((b) => b.x0 <= tickValue && tickValue < b.x1);
+          if (!bin) return;
+          const [mx, my] = d3.pointer(event, container);
+          tooltip
+            .style("left", `${mx + margin.left + 10}px`)
+            .style("top", `${my + margin.top - 10}px`)
+            .style("display", "block")
+            .text(
+              `${resolvedTooltipFormat(bin.x0)} – ${resolvedTooltipFormat(
+                bin.x1
+              )}: ${resolvedTickFormat(bin.length)}`
+            );
+        })
+        .on("mouseleave", () => tooltip.style("display", "none"));
     }
 
     return () => d3.select(container).selectAll("*").remove();

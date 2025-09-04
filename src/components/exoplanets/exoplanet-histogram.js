@@ -3,7 +3,7 @@ import React, { useRef, useEffect } from "react";
 import * as d3 from "d3";
 
 const CHART_CONFIG = {
-  margin: { top: 20, right: 20, bottom: 30, left: 40 },
+  margin: { top: 20, right: 20, bottom: 30, left: 60 },
   tickFontSize: 14,
   tooltipFontSize: 14,
   titleClassName: "text-lg font-semibold mb-2",

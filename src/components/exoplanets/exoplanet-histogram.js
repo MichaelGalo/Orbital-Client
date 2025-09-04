@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from "react";
 import * as d3 from "d3";
 
-const ExoplanetHistogram = ({ data = [], width = 800, height = 400, bins = 10 }) => {
+const ExoplanetHistogram = ({ data = [], width = 800, height = 400, bins = 10, title }) => {
     const ref = useRef(null);
 
     useEffect(() => {
@@ -95,7 +95,7 @@ const ExoplanetHistogram = ({ data = [], width = 800, height = 400, bins = 10 })
 
     return (
         <div>
-            <h2 className="text-lg font-semibold mb-2">Exoplanet Discoveries by Year</h2>
+            <h2 className="text-lg font-semibold mb-2">{title}</h2>
             <div ref={ref} />
         </div>
     );

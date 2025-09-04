@@ -56,12 +56,14 @@ export const fetchExoplanetsData = async (offset, limit) => {
   }
 };
 
+
 export const fetchBatchedExoplanets = async (batchSize) => {
   const allResults = [];
   for (let offset = 0; ; offset += batchSize) {
     const batch = await fetchExoplanetsData(offset, batchSize);
-  if (batch.length < batchSize || batch.length === 0) break;
+    if (batch.length === 0) break;
     allResults.push(...batch);
+    if (batch.length < batchSize) break;
   }
   return allResults;
 };

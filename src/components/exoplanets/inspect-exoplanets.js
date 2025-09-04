@@ -2,6 +2,7 @@
 import { fetchBatchedExoplanets } from "@/services/fetch-datasets";
 import { useEffect, useState } from "react";
 import ExoplanetModal from "./exoplanet-model";
+import ExoplanetHistogram from "./exoplanet-histogram";
 
 export const InspectExoplanets = () => {
   const page_size = 15;
@@ -46,6 +47,22 @@ export const InspectExoplanets = () => {
     <>
       <section>
         <h2 className="text-2xl font-semibold mb-4">Inspect Exoplanets</h2>
+
+        {/* Histogram: number of discoveries by year */}
+        <div className="mb-6">
+          {/* derive numeric discovery years from the full dataset */}
+          <ExoplanetHistogram
+            data={allExoplanets
+              .map((planet) => {
+                const y = Number(planet.discovery_year);
+                return Number.isFinite(y) ? y : NaN;
+              })
+              .filter((value) => !Number.isNaN(value))}
+            width={900}
+            height={300}
+            bins={Math.min(new Set(allExoplanets.map((planet) => planet.discovery_year).filter(Boolean)).size || 10, 80)}
+          />
+        </div>
 
         <div className="space-y-4 bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
           <div className="flex items-center justify-between mb-4">

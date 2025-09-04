@@ -20,7 +20,7 @@ export const Hero = () => {
   const formattedDate = heroData?.date ? new Date(heroData?.date).toLocaleDateString() : null;
 
   return (
-    <section className="w-full">
+    <section className="max-w-7xl mx-auto">
       <div className="rounded-lg overflow-hidden shadow-md bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
         <div className="grid grid-cols-1 md:grid-cols-3">
           {/* left: media */}

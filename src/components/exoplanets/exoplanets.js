@@ -18,9 +18,9 @@ const Exoplanets = () => {
 
     return (
         <section className="mx-auto max-w-7xl">
-            <h1 className="text-3xl font-bold mb-4">Exoplanets</h1>
+            <h2 className="text-3xl font-bold mb-4">Exoplanets</h2>
             <div className="mb-4 text-gray-700 dark:text-gray-300">
-            We've detected {allExoplanets.length} exoplanets so far! Explore the distributions of their discovery years and sizes below.
+                <strong> We've detected {allExoplanets.length} exoplanets so far!</strong>
             </div>
             <ExoplanetsCharts allExoplanets={allExoplanets} />
             <InspectExoplanets allExoplanets={allExoplanets} isLoading={isLoading} />

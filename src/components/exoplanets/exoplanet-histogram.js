@@ -2,6 +2,15 @@
 import React, { useRef, useEffect } from "react";
 import * as d3 from "d3";
 
+// Editable chart variables
+const CHART_CONFIG = {
+    margin: { top: 20, right: 20, bottom: 30, left: 40 },
+    tickFontSize: 14, // px for axis tick labels
+    tooltipFontSize: 14, // px for tooltip text
+    titleClassName: "text-lg font-semibold mb-2", // Tailwind class for title
+    barFill: "steelblue", // bar color
+};
+
 const ExoplanetHistogram = ({ data = [], width = 800, height = 400, bins = 10, title }) => {
     const ref = useRef(null);
 
@@ -15,16 +24,20 @@ const ExoplanetHistogram = ({ data = [], width = 800, height = 400, bins = 10, t
             return;
         }
 
-        const margin = { top: 20, right: 20, bottom: 30, left: 40 };
-        const innerWidth = width - margin.left - margin.right;
+        const margin = CHART_CONFIG.margin;
+
+        // measure available width from the container so the chart can be responsive
+        const measuredWidth = container.clientWidth || width;
+        const innerWidth = measuredWidth - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
 
         const svg = d3
             .select(container)
             .append("svg")
-            .attr("width", width)
+            // let the SVG scale to the container width while keeping the viewBox for correct drawing
+            .attr("width", "100%")
             .attr("height", height)
-            .attr("viewBox", `0 0 ${width} ${height}`)
+            .attr("viewBox", `0 0 ${measuredWidth} ${height}`)
             .attr("preserveAspectRatio", "xMidYMid meet");
 
         const group = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
@@ -52,17 +65,17 @@ const ExoplanetHistogram = ({ data = [], width = 800, height = 400, bins = 10, t
             .attr("y", (bin) => y(bin.length))
             .attr("width", (bin) => Math.max(0, x(bin.x1) - x(bin.x0) - 1))
             .attr("height", (bin) => innerHeight - y(bin.length))
-            .attr("fill", "steelblue");
+            .attr("fill", CHART_CONFIG.barFill);
 
         // x axis
         group
             .append("g")
             .attr("transform", `translate(0,${innerHeight})`)
             .call(d3.axisBottom(x).ticks(Math.min(bins, 10)))
-            .call((selection) => selection.selectAll("text").attr("font-size", 10));
+            .call((selection) => selection.selectAll("text").attr("font-size", CHART_CONFIG.tickFontSize));
 
         // y axis
-        group.append("g").call(d3.axisLeft(y).ticks(5)).call((selection) => selection.selectAll("text").attr("font-size", 10));
+        group.append("g").call(d3.axisLeft(y).ticks(5)).call((selection) => selection.selectAll("text").attr("font-size", CHART_CONFIG.tickFontSize));
 
         const tooltip = d3
             .select(container)
@@ -74,7 +87,7 @@ const ExoplanetHistogram = ({ data = [], width = 800, height = 400, bins = 10, t
             .style("color", "#fff")
             .style("padding", "6px 8px")
             .style("border-radius", "4px")
-            .style("font-size", "12px")
+            .style("font-size", `${CHART_CONFIG.tooltipFontSize}px`)
             .style("display", "none");
 
         bar
@@ -95,7 +108,7 @@ const ExoplanetHistogram = ({ data = [], width = 800, height = 400, bins = 10, t
 
     return (
         <div>
-            <h2 className="text-lg font-semibold mb-2">{title}</h2>
+            <h2 className={CHART_CONFIG.titleClassName}>{title}</h2>
             <div ref={ref} />
         </div>
     );

@@ -2,16 +2,25 @@
 import React, { useRef, useEffect } from "react";
 import * as d3 from "d3";
 
-// Editable chart variables
 const CHART_CONFIG = {
     margin: { top: 20, right: 20, bottom: 30, left: 40 },
-    tickFontSize: 14, // px for axis tick labels
-    tooltipFontSize: 14, // px for tooltip text
-    titleClassName: "text-lg font-semibold mb-2", // Tailwind class for title
-    barFill: "steelblue", // bar color
+    tickFontSize: 14, 
+    tooltipFontSize: 14,
+    titleClassName: "text-lg font-semibold mb-2",
+    barFill: "steelblue",
+    tickFormatSpec: ",d",
+    tooltipNumberFormatSpec: ".0f",
 };
 
-const ExoplanetHistogram = ({ data = [], width = 800, height = 400, bins = 10, title }) => {
+const ExoplanetHistogram = ({
+  data = [],
+  width = 800,
+  height = 400,
+  bins = 10,
+  title,
+  tickFormatSpec,
+  tooltipNumberFormatSpec,
+}) => {
     const ref = useRef(null);
 
     useEffect(() => {
@@ -25,6 +34,17 @@ const ExoplanetHistogram = ({ data = [], width = 800, height = 400, bins = 10, t
         }
 
         const margin = CHART_CONFIG.margin;
+
+        // determine effective formatter functions:
+        const resolvedTickFormat =
+            typeof tickFormatSpec === "function"
+                ? tickFormatSpec
+                : d3.format(tickFormatSpec ?? CHART_CONFIG.tickFormatSpec);
+
+        const resolvedTooltipNumberFormat =
+            typeof tooltipNumberFormatSpec === "function"
+                ? tooltipNumberFormatSpec
+                : d3.format(tooltipNumberFormatSpec ?? CHART_CONFIG.tooltipNumberFormatSpec);
 
         // measure available width from the container so the chart can be responsive
         const measuredWidth = container.clientWidth || width;
@@ -71,11 +91,13 @@ const ExoplanetHistogram = ({ data = [], width = 800, height = 400, bins = 10, t
         group
             .append("g")
             .attr("transform", `translate(0,${innerHeight})`)
-            .call(d3.axisBottom(x).ticks(Math.min(bins, 10)))
+            .call(d3.axisBottom(x).ticks(Math.min(bins, 10)).tickFormat(resolvedTickFormat))
             .call((selection) => selection.selectAll("text").attr("font-size", CHART_CONFIG.tickFontSize));
 
         // y axis
-        group.append("g").call(d3.axisLeft(y).ticks(5)).call((selection) => selection.selectAll("text").attr("font-size", CHART_CONFIG.tickFontSize));
+        group.append("g").call(d3.axisLeft(y).ticks(5).tickFormat(resolvedTickFormat)).call((selection) =>
+            selection.selectAll("text").attr("font-size", CHART_CONFIG.tickFontSize)
+        );
 
         const tooltip = d3
             .select(container)
@@ -97,14 +119,18 @@ const ExoplanetHistogram = ({ data = [], width = 800, height = 400, bins = 10, t
                     .style("left", `${mx + margin.left + 10}px`)
                     .style("top", `${my + margin.top - 10}px`)
                     .style("display", "block")
-                    .text(`${bin.x0.toFixed(2)} – ${bin.x1.toFixed(2)}: ${bin.length}`);
+                    .text(
+                        `${resolvedTooltipNumberFormat(bin.x0)} – ${resolvedTooltipNumberFormat(bin.x1)}: ${resolvedTickFormat(
+                            bin.length
+                        )}`
+                    );
             })
             .on("mouseleave", () => tooltip.style("display", "none"));
 
         return () => {
             d3.select(container).selectAll("*").remove();
         };
-    }, [data, width, height, bins]);
+    }, [data, width, height, bins, tickFormatSpec, tooltipNumberFormatSpec]);
 
     return (
         <div>
@@ -115,3 +141,4 @@ const ExoplanetHistogram = ({ data = [], width = 800, height = 400, bins = 10, t
 };
 
 export default ExoplanetHistogram;
+// ...existing code...

@@ -1,7 +1,6 @@
 import ExoplanetHistogram from "./exoplanet-histogram";
 
 const ExoplanetsCharts = ({allExoplanets}) => {
-  // prepare datasets
   const discoveryYears = allExoplanets
     .map((planet) => {
       const discoveryYearNumber = Number(planet.discovery_year);
@@ -19,6 +18,7 @@ const ExoplanetsCharts = ({allExoplanets}) => {
             height={500}
             bins={Math.min(new Set(allExoplanets.map((planet) => planet.discovery_year).filter(Boolean)).size || 10, 80)}
             title="Exoplanet Discoveries by Year"
+            tickFormatSpec="d"
           />
         </div>
 

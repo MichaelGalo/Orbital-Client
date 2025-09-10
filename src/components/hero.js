@@ -31,6 +31,7 @@ export const Hero = () => {
                 src={heroData?.url}
                 alt={heroData?.title || "NASA Picture of the Day"}
                 className="w-full h-64 md:h-full object-cover block"
+                unoptimized={true}
               />
             ) : (
               <div className="w-full h-64 md:h-full flex items-center justify-center text-white px-4">
@@ -107,6 +108,7 @@ export const Hero = () => {
               src={heroData?.url}
               alt={heroData?.title || "NASA Picture of the Day"}
               className="w-full h-auto max-h-[85vh] object-contain"
+              unoptimized={true}
             />
           </div>
         </Modal>

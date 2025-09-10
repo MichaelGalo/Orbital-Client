@@ -20,7 +20,7 @@ const AstroCard = ({ astro }) => {
               alt={`${astro.name} headshot`}
               loading="lazy"
               className="w-full h-full object-cover object-center block"
-              onError={() => setImgError(true)}
+              unoptimized={true}
             />
           ) : (
             <div className="w-full h-64 md:h-full flex items-center justify-center text-white px-4">

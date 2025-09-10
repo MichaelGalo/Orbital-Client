@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Modal from "../modal";
+import Image from 'next/image';
 
 const AstroCard = ({ astro }) => {
     const [open, setOpen] = useState(false);
@@ -14,7 +15,7 @@ const AstroCard = ({ astro }) => {
         <div className="md:col-span-1 bg-gradient-to-br from-sky-500 via-indigo-500 to-purple-600 flex items-center justify-center h-96">
 
           {astro.image_url ? (
-            <img
+            <Image
               src={astro.image_url}
               alt={`${astro.name} headshot`}
               loading="lazy"

@@ -1,4 +1,4 @@
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+const baseUrl = process.env.NEXT_PUBLIC_DEPLOYMENT_URL
 
 export const fetchHeroImage = async () => {
   try {

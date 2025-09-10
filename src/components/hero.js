@@ -2,6 +2,7 @@
 
 import { fetchHeroImage } from "@/services/fetch-datasets";
 import { useEffect, useState } from "react";
+import Image from 'next/image';
 import Modal from "./modal";
 
 export const Hero = () => {
@@ -26,7 +27,7 @@ export const Hero = () => {
           {/* left: media */}
           <div className="md:col-span-1 bg-gradient-to-br from-sky-500 via-indigo-500 to-purple-600 flex items-center justify-center">
             {heroData?.url ? (
-              <img
+              <Image
                 src={heroData?.url}
                 alt={heroData?.title || "NASA Picture of the Day"}
                 className="w-full h-64 md:h-full object-cover block"
@@ -102,7 +103,7 @@ export const Hero = () => {
       {open && heroData?.url && (
         <Modal isOpen={open} onClose={() => setOpen(false)} className="max-w-5xl" ariaLabel={heroData?.title}>
           <div className="w-full flex items-center justify-center">
-            <img
+            <Image
               src={heroData?.url}
               alt={heroData?.title || "NASA Picture of the Day"}
               className="w-full h-auto max-h-[85vh] object-contain"

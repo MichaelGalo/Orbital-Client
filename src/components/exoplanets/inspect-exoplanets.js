@@ -1,37 +1,16 @@
 "use client";
-import { fetchBatchedExoplanets } from "@/services/fetch-datasets";
-import { useEffect, useState } from "react";
-import Modal from "../modal";
+import { useEffect, useState, useMemo } from "react";
+import ExoplanetModal from "./exoplanet-model";
 
-export const InspectExoplanets = () => {
+export const InspectExoplanets = ({ allExoplanets = [], isLoading = false }) => {
   const page_size = 15;
-
   const [page, setPage] = useState(0);
-  const [exoplanetsData, setExoplanetsData] = useState([]);
-  const [allExoplanets, setAllExoplanets] = useState([]);
   const [selectedPlanet, setSelectedPlanet] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [hasMore, setHasMore] = useState(true);
-
-  useEffect(() => {
-    setIsLoading(true);
-    setError(null);
-
-    fetchBatchedExoplanets(1000)
-      .then((allResults) => {
-        setAllExoplanets(allResults);
-        setExoplanetsData(allResults.slice(0, page_size));
-        setHasMore(allResults.length > page_size);
-        setIsLoading(false);
-      });
-  }, []);
-
-  useEffect(() => {
-    const startIndex = page * page_size;
-    setExoplanetsData(allExoplanets.slice(startIndex, startIndex + page_size));
-    setHasMore(allExoplanets.length > startIndex + page_size);
-  }, [page, allExoplanets]);
+  const startIndex = page * page_size;
+  const exoplanetsData = useMemo(() => {
+    return allExoplanets.slice(startIndex, startIndex + page_size);
+  }, [allExoplanets, startIndex]);
+  const hasMore = allExoplanets.length > startIndex + page_size;
 
   const goNext = () => {
     if (!hasMore) return;
@@ -42,10 +21,15 @@ export const InspectExoplanets = () => {
     setPage((page) => Math.max(0, page - 1));
   };
 
+  useEffect(() => {
+      const maxPage = Math.max(0, Math.ceil(allExoplanets.length / page_size) - 1);
+      if (page > maxPage) setPage(maxPage);
+    }, [allExoplanets, page]);
+
   return (
     <>
       <section>
-        <h2 className="text-2xl font-semibold mb-4">Inspect Exoplanets</h2>
+        <h2 className="text-2xl font-semibold mb-4">Inspect Individual Exoplanets</h2>
 
         <div className="space-y-4 bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
           <div className="flex items-center justify-between mb-4">
@@ -71,10 +55,9 @@ export const InspectExoplanets = () => {
           </div>
 
         {isLoading && <div className="text-sm text-gray-500">Loading…</div>}
-        {error && <div className="text-sm text-red-500">Error: {error}</div>}
 
         <div>
-          {exoplanetsData.length === 0 && !isLoading && !error ? (
+          {exoplanetsData.length === 0 && !isLoading ? (
             <div className="text-sm text-gray-500">No exoplanets found.</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -104,82 +87,9 @@ export const InspectExoplanets = () => {
       </div>
   </section>
 
-  {/* Modal for selected planet (inlined) */}
+  {/* Modal*/}
   {selectedPlanet && (
-    <Modal
-      isOpen={!!selectedPlanet}
-      onClose={() => setSelectedPlanet(null)}
-      title={
-        (function formatValue(v) {
-          if (v === null || v === undefined || v === "") return "—";
-          return String(v);
-        })(selectedPlanet.planet_name || selectedPlanet.name || "Unnamed")
-      }
-    >
-      {(() => {
-        const formatValue = (value) => {
-          if (value === null || value === undefined || value === "") return "—";
-          return String(value);
-        };
-
-        const formatControversial = (value) => {
-          if (value === 0) return "False, the discovery of this exoplanet is not disputed by the Space Community.";
-          if (value === 1) return "True, the discovery of this exoplanet is disputed by the Space Community.";
-          if (value === null || value === undefined || value === "") return "-";
-        };
-
-        return (
-          <div className="mt-0 bg-gray-50 dark:bg-gray-900 p-3 rounded text-sm">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <div className="text-xs text-gray-500">Discovery year</div>
-                <div className="text-sm text-gray-800 dark:text-gray-200">{formatValue(selectedPlanet.discovery_year)}</div>
-              </div>
-
-              <div>
-                <div className="text-xs text-gray-500">Discovery method</div>
-                <div className="text-sm text-gray-800 dark:text-gray-200">{formatValue(selectedPlanet.discovery_method)}</div>
-              </div>
-
-              <div>
-                <div className="text-xs text-gray-500">Discovery facility</div>
-                <div className="text-sm text-gray-800 dark:text-gray-200">{formatValue(selectedPlanet.discovery_facility)}</div>
-              </div>
-
-              <div>
-                <div className="text-xs text-gray-500">Instrument</div>
-                <div className="text-sm text-gray-800 dark:text-gray-200">{formatValue(selectedPlanet.discovery_instrument)}</div>
-              </div>
-
-              <div>
-                <div className="text-xs text-gray-500">Controversial?</div>
-                <div className="text-sm text-gray-800 dark:text-gray-200">{formatControversial(selectedPlanet.controversial_flag)}</div>
-              </div>
-
-              <div>
-                <div className="text-xs text-gray-500">Orbital period (days)</div>
-                <div className="text-sm text-gray-800 dark:text-gray-200">{formatValue(selectedPlanet.orbital_period_days)}</div>
-              </div>
-
-              <div>
-                <div className="text-xs text-gray-500">Semi-major axis (AU)</div>
-                <div className="text-sm text-gray-800 dark:text-gray-200">{formatValue(selectedPlanet.orbital_semi_major_axis_in_au)}</div>
-              </div>
-
-              <div>
-                <div className="text-xs text-gray-500">Radius (Earth radii)</div>
-                <div className="text-sm text-gray-800 dark:text-gray-200">{formatValue(selectedPlanet.radius_earth_radii)}</div>
-              </div>
-
-              <div>
-                <div className="text-xs text-gray-500">Star radius (Solar radii)</div>
-                <div className="text-sm text-gray-800 dark:text-gray-200">{formatValue(selectedPlanet.star_radius_solar_radii)}</div>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
-    </Modal>
+    <ExoplanetModal selectedPlanet={selectedPlanet} onClose={() => setSelectedPlanet(null)} />
   )}
     </>
   );

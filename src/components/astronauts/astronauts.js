@@ -15,7 +15,7 @@ export const Astronauts = () => {
   }, []);
 
   return (
-    <section>
+    <section className="max-w-7xl mx-auto">
       <h2 className="text-2xl font-semibold mb-4">Astronauts in Space Right Now: {astronautData.length}</h2>
 
       {loading ? (

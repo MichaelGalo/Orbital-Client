@@ -39,7 +39,7 @@ export const SpaceWeatherNotifications = () => {
   }, []);
 
   return (
-    <section>
+    <section className="max-w-7xl mx-auto">
       <h2 className="text-2xl font-semibold mb-4">Space Weather Notifications</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {(() => {

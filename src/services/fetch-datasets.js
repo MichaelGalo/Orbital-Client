@@ -1,61 +1,22 @@
-const baseUrl = process.env.NEXT_PUBLIC_DEPLOYMENT_URL
+const baseUrl = process.env.NEXT_PUBLIC_DEPLOYMENT_URL;
 
-export const fetchHeroImage = async () => {
-  try {
-    const response = await fetch(`${baseUrl}/datasets/2`);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching hero image data:', error);
-    throw error;
+const fetcher = async (url) => {
+  const response = await fetch(url, {
+    cache: 'no-store', 
+  });
+
+  if (!response.ok) {
+    throw new Error(`Network response was not ok for ${url}`);
   }
+
+  return response.json();
 };
 
-export const fetchAstronauts = async () => {
-  try {
-    const response = await fetch(`${baseUrl}/datasets/1`);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching astronaut data:', error);
-    throw error;
-  }
-};
-
-export const fetchSpaceWeatherAlerts = async () => {
-  try {
-    const response = await fetch(`${baseUrl}/datasets/3`);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching space weather alerts data:', error);
-    throw error;
-  }
-};
-
-export const fetchExoplanetsData = async (offset, limit) => {
-  try {
-    const response = await fetch(`${baseUrl}/datasets/4?offset=${offset}&limit=${limit}`);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching exoplanet data:', error);
-    throw error;
-  }
-};
-
+export const fetchHeroImage = () => fetcher(`${baseUrl}/datasets/2`);
+export const fetchAstronauts = () => fetcher(`${baseUrl}/datasets/1`);
+export const fetchSpaceWeatherAlerts = () => fetcher(`${baseUrl}/datasets/3`);
+export const fetchExoplanetsData = (offset, limit) =>
+  fetcher(`${baseUrl}/datasets/4?offset=${offset}&limit=${limit}`);
 
 export const fetchBatchedExoplanets = async (batchSize) => {
   const allResults = [];

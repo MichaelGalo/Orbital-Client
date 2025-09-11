@@ -3,10 +3,6 @@ FROM node:20-slim AS builder
 
 WORKDIR /app
 
-# Accept the deployment URL at build time
-ARG NEXT_PUBLIC_DEPLOYMENT_URL
-ENV NEXT_PUBLIC_DEPLOYMENT_URL=$NEXT_PUBLIC_DEPLOYMENT_URL
-
 # Install dependencies exactly from lockfile
 COPY package*.json ./
 RUN npm ci
@@ -22,10 +18,6 @@ FROM node:20-slim AS runner
 
 WORKDIR /app
 
-# Accept the deployment URL at runtime
-ARG NEXT_PUBLIC_DEPLOYMENT_URL
-ENV NEXT_PUBLIC_DEPLOYMENT_URL=$NEXT_PUBLIC_DEPLOYMENT_URL
-
 # Install production dependencies only
 COPY package*.json ./
 RUN npm ci --omit=dev
@@ -34,8 +26,6 @@ RUN npm ci --omit=dev
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.mjs ./next.config.mjs
-
-# Optional: copy .env if you want defaults for local dev
 COPY --from=builder /app/.env ./.env
 
 # Expose Cloud Run default port

@@ -20,6 +20,8 @@ const AstroCard = ({ astro }) => {
               alt={`${astro.name} headshot`}
               loading="lazy"
               className="w-full h-full object-cover object-center block"
+              width={600}
+              height={400}
               unoptimized={true}
             />
           ) : (

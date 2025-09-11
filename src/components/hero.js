@@ -30,6 +30,8 @@ export const Hero = () => {
               <Image
                 src={heroData?.url}
                 alt={heroData?.title || "NASA Picture of the Day"}
+                width={600}
+                height={400}
                 className="w-full h-64 md:h-full object-cover block"
                 unoptimized={true}
               />

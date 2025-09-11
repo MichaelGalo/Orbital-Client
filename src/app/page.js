@@ -2,6 +2,7 @@ import Astronauts from "@/components/astronauts/astronauts";
 import Exoplanets from "@/components/exoplanets/exoplanets";
 import Hero from "@/components/hero/hero";
 import SpaceWeatherNotifications from "@/components/space-weather-notifications/space-weather-notifications";
+import { Suspense } from "react";
 
 export default async function Home() {
 
@@ -11,10 +12,18 @@ export default async function Home() {
       <div className="p-6 sm:p-10 flex flex-col items-center gap-4 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-100 dark:border-gray-700">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-gray-100 text-center">{"Orbital, simplifying the astronomical."}</h1>
       </div>
-        < Hero />
-        < Astronauts />
-        < SpaceWeatherNotifications />
-        <Exoplanets />
+        <Suspense fallback={<div>Loading Hero Section...</div>}>
+          <Hero />
+        </Suspense>
+        <Suspense fallback={<div>Loading Astronauts...</div>}>
+          <Astronauts />
+        </Suspense>
+        <Suspense fallback={<div>Loading Space Weather Notifications...</div>}>
+          <SpaceWeatherNotifications />
+        </Suspense>
+        <Suspense fallback={<div>Loading Exoplanets...</div>}>
+          <Exoplanets />
+        </Suspense>
       </main>
     </div>
   );

@@ -10,10 +10,6 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Provide env variable at build time
-ARG NEXT_PUBLIC_DEPLOYMENT_URL
-ENV NEXT_PUBLIC_DEPLOYMENT_URL=$NEXT_PUBLIC_DEPLOYMENT_URL
-
 # Build Next.js app (disable Turbopack for reliability in Docker)
 RUN npm run build --no-turbo
 

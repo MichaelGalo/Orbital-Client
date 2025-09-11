@@ -1,30 +1,32 @@
 "use client";
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import ExoplanetModal from "./exoplanet-model";
 
-export const InspectExoplanets = ({ allExoplanets = [], isLoading = false }) => {
+export default function InspectExoplanets({ allExoplanets = [] }) {
   const page_size = 15;
   const [page, setPage] = useState(0);
   const [selectedPlanet, setSelectedPlanet] = useState(null);
+
   const startIndex = page * page_size;
-  const exoplanetsData = useMemo(() => {
-    return allExoplanets.slice(startIndex, startIndex + page_size);
-  }, [allExoplanets, startIndex]);
+  const exoplanetsData = useMemo(
+    () => allExoplanets.slice(startIndex, startIndex + page_size),
+    [allExoplanets, startIndex]
+  );
   const hasMore = allExoplanets.length > startIndex + page_size;
 
   const goNext = () => {
     if (!hasMore) return;
-    setPage((page) => page + 1);
+    setPage((p) => p + 1);
   };
 
   const goPrev = () => {
-    setPage((page) => Math.max(0, page - 1));
+    setPage((p) => Math.max(0, p - 1));
   };
 
   useEffect(() => {
-      const maxPage = Math.max(0, Math.ceil(allExoplanets.length / page_size) - 1);
-      if (page > maxPage) setPage(maxPage);
-    }, [allExoplanets, page]);
+    const maxPage = Math.max(0, Math.ceil(allExoplanets.length / page_size) - 1);
+    if (page > maxPage) setPage(maxPage);
+  }, [allExoplanets, page]);
 
   return (
     <>
@@ -33,20 +35,20 @@ export const InspectExoplanets = ({ allExoplanets = [], isLoading = false }) => 
 
         <div className="space-y-4 bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
           <div className="flex items-center justify-between mb-4">
-              <div className="text-sm text-gray-700 dark:text-gray-300">
-              Page {page + 1} / {Math.ceil(allExoplanets.length / page_size)}
+            <div className="text-sm text-gray-700 dark:text-gray-300">
+              Page {page + 1} / {Math.max(1, Math.ceil(allExoplanets.length / page_size))}
             </div>
             <div className="space-x-2">
               <button
                 onClick={goPrev}
-                disabled={page === 0 || isLoading}
+                disabled={page === 0}
                 className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 disabled:opacity-50"
               >
                 Prev
               </button>
               <button
                 onClick={goNext}
-                disabled={!hasMore || isLoading}
+                disabled={!hasMore}
                 className="px-3 py-1 rounded bg-blue-500 text-white disabled:opacity-50"
               >
                 Next 15
@@ -54,10 +56,7 @@ export const InspectExoplanets = ({ allExoplanets = [], isLoading = false }) => 
             </div>
           </div>
 
-        {isLoading && <div className="text-sm text-gray-500">Loading…</div>}
-
-        <div>
-          {exoplanetsData.length === 0 && !isLoading ? (
+          {exoplanetsData.length === 0 ? (
             <div className="text-sm text-gray-500">No exoplanets found.</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -70,13 +69,19 @@ export const InspectExoplanets = ({ allExoplanets = [], isLoading = false }) => 
                     role="button"
                     tabIndex={0}
                     onClick={() => setSelectedPlanet(planet)}
-                    onKeyDown={(event) => event.key === "Enter" && setSelectedPlanet(planet)}
+                    onKeyDown={(event) =>
+                      event.key === "Enter" && setSelectedPlanet(planet)
+                    }
                     className="rounded-lg border border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800 shadow-sm cursor-pointer focus:shadow-md"
                   >
-                    <h3 className="font-semibold text-lg mb-1 truncate">{planet.planet_name || "Unnamed"}</h3>
+                    <h3 className="font-semibold text-lg mb-1 truncate">
+                      {planet.planet_name || "Unnamed"}
+                    </h3>
 
                     <div className="mt-3 flex items-center justify-between">
-                      <div className="text-xs text-gray-400">#{page * page_size + (index + 1)}</div>
+                      <div className="text-xs text-gray-400">
+                        #{page * page_size + (index + 1)}
+                      </div>
                     </div>
                   </article>
                 );
@@ -84,13 +89,15 @@ export const InspectExoplanets = ({ allExoplanets = [], isLoading = false }) => 
             </div>
           )}
         </div>
-      </div>
-  </section>
+      </section>
 
-  {/* Modal*/}
-  {selectedPlanet && (
-    <ExoplanetModal selectedPlanet={selectedPlanet} onClose={() => setSelectedPlanet(null)} />
-  )}
+      {/* Modal */}
+      {selectedPlanet && (
+        <ExoplanetModal
+          selectedPlanet={selectedPlanet}
+          onClose={() => setSelectedPlanet(null)}
+        />
+      )}
     </>
   );
-};
+}

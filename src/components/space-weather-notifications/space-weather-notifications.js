@@ -1,3 +1,5 @@
+"use client"
+
 import { fetchSpaceWeatherAlerts } from "@/services/fetch-datasets";
 import { useEffect, useState } from "react";
 import Modal from "../modal";

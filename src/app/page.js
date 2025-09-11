@@ -1,12 +1,9 @@
-"use client";
-
-import { Astronauts } from "@/components/astronauts/astronauts";
+import Astronauts from "@/components/astronauts/astronauts";
 import Exoplanets from "@/components/exoplanets/exoplanets";
-import { InspectExoplanets } from "@/components/exoplanets/inspect-exoplanets";
-import { Hero } from "@/components/hero";
+import Hero from "@/components/hero/hero";
 import { SpaceWeatherNotifications } from "@/components/space-weather-notifications/space-weather-notifications";
 
-export default function Home() {
+export default async function Home() {
 
   return (
     <div className="font-sans min-h-screen p-8 sm:p-20 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">

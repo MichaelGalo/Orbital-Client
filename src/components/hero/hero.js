@@ -1,24 +1,13 @@
-"use client"
-
+import Image from "next/image";
 import { fetchHeroImage } from "@/services/fetch-datasets";
-import { useEffect, useState } from "react";
-import Image from 'next/image';
-import Modal from "./modal";
+import HeroModalTrigger from "./hero-modal";
 
-export const Hero = () => {
-  const [heroData, setHeroData] = useState(null);
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const getHeroImage = async () => {
-      const response = await fetchHeroImage();
-      setHeroData(response[0]);
-    };
-
-    getHeroImage();
-  }, []);
-
-  const formattedDate = heroData?.date ? new Date(heroData?.date).toLocaleDateString() : null;
+export default async function Hero() {
+  const data = await fetchHeroImage(); 
+  const heroData = data[0];
+  const formattedDate = heroData?.date
+    ? new Date(heroData.date).toLocaleDateString()
+    : null;
 
   return (
     <section className="max-w-7xl mx-auto">
@@ -28,18 +17,22 @@ export const Hero = () => {
           <div className="md:col-span-1 bg-gradient-to-br from-sky-500 via-indigo-500 to-purple-600 flex items-center justify-center">
             {heroData?.url ? (
               <Image
-                src={heroData?.url}
+                src={heroData.url}
                 alt={heroData?.title || "NASA Picture of the Day"}
-                width={600}
-                height={400}
                 className="w-full h-64 md:h-full object-cover block"
-                unoptimized={true}
+                unoptimized
+                width={400}
+                height={600}
+                priority
               />
             ) : (
               <div className="w-full h-64 md:h-full flex items-center justify-center text-white px-4">
                 <div className="text-center">
                   <div className="text-2xl font-semibold">NASA Video</div>
-                  <div className="text-sm mt-1">Current Media Type Unsupported. Click the 'view full media' button to view.</div>
+                  <div className="text-sm mt-1">
+                    Current Media Type Unsupported. Click the 'view full media'
+                    button to view.
+                  </div>
                 </div>
               </div>
             )}
@@ -62,7 +55,7 @@ export const Hero = () => {
 
               <div className="mt-3 text-base text-gray-700 dark:text-gray-200 max-w-prose">
                 {heroData?.explanation ? (
-                  <p className="line-clamp-none">{heroData?.explanation}</p>
+                  <p>{heroData.explanation}</p>
                 ) : (
                   <p>Simplifying the astronomical.</p>
                 )}
@@ -71,24 +64,22 @@ export const Hero = () => {
 
             <div className="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
               <div className="flex items-center gap-3">
-                <span className="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs">NASA APOD</span>
+                <span className="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs">
+                  NASA APOD
+                </span>
                 {heroData?.copyright && (
-                  <span className="text-xs text-gray-500 dark:text-gray-400">© {heroData?.copyright}</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    © {heroData.copyright}
+                  </span>
                 )}
               </div>
 
               <div className="flex items-center gap-2">
                 {heroData?.url ? (
-                  <button
-                    onClick={() => setOpen(true)}
-                    aria-label="View full image"
-                    className="inline-block px-3 py-2 bg-sky-600 text-white text-xs rounded hover:bg-sky-700 transition"
-                  >
-                    View full media
-                  </button>
+                  <HeroModalTrigger heroData={heroData} />
                 ) : (
                   <a
-                    href={"https://apod.nasa.gov/apod/astropix.html"}
+                    href="https://apod.nasa.gov/apod/astropix.html"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-block px-3 py-2 border border-gray-200 dark:border-gray-700 text-xs rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition"
@@ -101,20 +92,6 @@ export const Hero = () => {
           </div>
         </div>
       </div>
-
-      {/* Modal to display full image only */}
-      {open && heroData?.url && (
-        <Modal isOpen={open} onClose={() => setOpen(false)} className="max-w-5xl" ariaLabel={heroData?.title}>
-          <div className="w-full flex items-center justify-center">
-            <Image
-              src={heroData?.url}
-              alt={heroData?.title || "NASA Picture of the Day"}
-              className="w-full h-auto max-h-[85vh] object-contain"
-              unoptimized={true}
-            />
-          </div>
-        </Modal>
-      )}
     </section>
   );
-};
+}

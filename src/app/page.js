@@ -1,7 +1,7 @@
 import Astronauts from "@/components/astronauts/astronauts";
 import Exoplanets from "@/components/exoplanets/exoplanets";
 import Hero from "@/components/hero/hero";
-import { SpaceWeatherNotifications } from "@/components/space-weather-notifications/space-weather-notifications";
+import SpaceWeatherNotifications from "@/components/space-weather-notifications/space-weather-notifications";
 
 export default async function Home() {
 

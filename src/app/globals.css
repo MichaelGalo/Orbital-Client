@@ -24,3 +24,18 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Ensure markdown/prose content wraps and code blocks don't overflow their containers */
+.prose, .prose * {
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+.prose pre, .prose code {
+  white-space: pre-wrap; /* allow long lines to wrap */
+  word-break: break-word;
+}
+
+.prose img, .prose table {
+  max-width: 100%;
+}

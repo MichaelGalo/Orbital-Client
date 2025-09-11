@@ -1,17 +1,20 @@
 # Orbital Client
 
-This is a client to display data from the Orbital API, simplifying the astronomical.
+A front-end data-visualization client for the Orbital data engineering capstone back end.
 
-## Getting Started
+This repository is the user-facing client used to view cleaned datasets served by the Orbital Data Pipeline. Reference the link below to the Orbital Data Pipeline for Details about the project & data sources
 
-First, run the development server:
+## Quick start
+
+Install dependencies and run the development server:
 
 ```bash
+npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 in your browser.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Links
+- [Orbital Data Pipeline](https://github.com/MichaelGalo/Orbital-Data-Pipeline)
+- [Orbital API Codebase](https://github.com/MichaelGalo/Orbital-API)
